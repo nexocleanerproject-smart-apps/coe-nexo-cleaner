@@ -1,0 +1,122 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background: #f4f6f8;
+  color: #1f2937;
+  padding-bottom: 40px;
+}
+
+.topbar {
+  background: #0f4c81;
+  color: #fff;
+  padding: 18px 16px;
+  text-align: center;
+}
+.topbar h1 { font-size: 20px; font-weight: 600; }
+.subjudul { font-size: 13px; opacity: .85; margin-top: 2px; }
+
+.wadah { max-width: 900px; margin: 0 auto; padding: 16px; }
+
+/* Navigasi bulan */
+.nav-bulan {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.judul-bulan { text-align: center; }
+#label-bulan { display: block; font-size: 17px; font-weight: 600; }
+.btn-nav {
+  width: 40px; height: 40px;
+  font-size: 22px; line-height: 1;
+  border: 1px solid #d5dbe2;
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.btn-nav:hover { background: #eef2f6; }
+.btn-hari-ini {
+  margin-top: 4px;
+  font-size: 12px;
+  border: none;
+  background: none;
+  color: #0f4c81;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* Status */
+.kotak-status {
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 12px;
+  background: #e8f0f7;
+  color: #0f4c81;
+}
+.kotak-status.error { background: #fdecec; color: #b42318; }
+.kotak-status.sembunyi { display: none; }
+
+/* Kalender */
+.kalender {
+  background: #fff;
+  border: 1px solid #e3e8ee;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.baris-hari, .grid-tanggal {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+.nama-hari {
+  padding: 8px 4px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  background: #f7f9fb;
+  border-bottom: 1px solid #e3e8ee;
+}
+.nama-hari.libur { color: #b42318; }
+
+.sel {
+  min-height: 78px;
+  border-right: 1px solid #eef1f4;
+  border-bottom: 1px solid #eef1f4;
+  padding: 4px;
+  font-size: 12px;
+}
+.sel.kosong { background: #fafbfc; }
+.angka-tanggal { font-weight: 600; font-size: 12px; }
+.sel.hari-ini .angka-tanggal {
+  background: #0f4c81;
+  color: #fff;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px; height: 22px;
+}
+
+.sel.ada-event { background: #fff8e6; cursor: pointer; }
+.sel.ada-event:hover { background: #ffefc4; }
+
+.chip-event {
+  margin-top: 3px;
+  background: #0f4c81;
+  color: #fff;
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 10px;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lebih-event { font-size: 10px; color: #6b7280; margin-top: 2px; }
+
+@media (max-width: 520px) {
+  .sel { min-height: 62px; }
+  .chip-event { font-size: 9px; }
+}

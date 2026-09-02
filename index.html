@@ -3,10 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>COE Nexo Cleaner</title>
+  <title>Calendar of Event — Nexo Cleaner</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>COE Nexo Cleaner</h1>
-  <p>Tes GitHub Pages berhasil.</p>
+
+  <header class="topbar">
+    <h1>Calendar of Event</h1>
+    <p class="subjudul">Nexo Cleaner</p>
+  </header>
+
+  <main class="wadah">
+
+    <!-- Navigasi bulan -->
+    <div class="nav-bulan">
+      <button id="btn-prev" class="btn-nav" type="button" aria-label="Bulan sebelumnya">&#8249;</button>
+      <div class="judul-bulan">
+        <span id="label-bulan">Memuat...</span>
+        <button id="btn-hari-ini" class="btn-hari-ini" type="button">Hari ini</button>
+      </div>
+      <button id="btn-next" class="btn-nav" type="button" aria-label="Bulan berikutnya">&#8250;</button>
+    </div>
+
+    <!-- Status loading / error -->
+    <div id="kotak-status" class="kotak-status">Memuat data event...</div>
+
+    <!-- Kalender -->
+    <div class="kalender">
+      <div class="baris-hari">
+        <div class="nama-hari libur">Min</div>
+        <div class="nama-hari">Sen</div>
+        <div class="nama-hari">Sel</div>
+        <div class="nama-hari">Rab</div>
+        <div class="nama-hari">Kam</div>
+        <div class="nama-hari">Jum</div>
+        <div class="nama-hari libur">Sab</div>
+      </div>
+      <div id="grid-tanggal" class="grid-tanggal"></div>
+    </div>
+
+    <!-- Area ini akan dipakai di Room 5 (accordion detail event) -->
+    <div id="area-detail"></div>
+
+  </main>
+
+  <script src="script.js"></script>
 </body>
 </html>
