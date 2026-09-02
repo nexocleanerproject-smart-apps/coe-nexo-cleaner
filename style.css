@@ -319,3 +319,48 @@ body {
     padding: 1px 3px;
   }
 }
+
+/* ============================================================
+   ROOM 7: TOMBOL REFRESH & PENANDA PEMBARUAN
+   ============================================================ */
+
+#btn-refresh-r7 {
+  margin-left: 8px;          /* jarak dari tombol "Hari ini" */
+  vertical-align: middle;
+  width: 23px;
+  height: 23px;
+  padding: 0;
+  font-size: 15px;
+  line-height: 1;
+  border: 1px solid #d5dbe2;
+  background: #fff;
+  color: #0f4c81;
+  border-radius: 50%;         /* bulat sempurna */
+  cursor: pointer;
+}
+
+#btn-refresh-r7:hover {
+  background: #eef2f6;
+}
+
+#btn-refresh-r7[disabled] {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* panah ikut berputar selama data sedang diambil */
+.berputar-r7 {
+  animation: putar-r7 0.8s linear infinite;
+}
+
+@keyframes putar-r7 {
+  to { transform: rotate(360deg); }
+}
+
+#jam-update-r7 {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #6b7280;
+  text-align: center;
+}

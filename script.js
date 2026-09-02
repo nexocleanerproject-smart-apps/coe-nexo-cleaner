@@ -325,3 +325,131 @@ elDetailR5.addEventListener("click", function (e) {
   const b = document.getElementById(id);
   if (b) b.addEventListener("click", tutupDetailR5);
 });
+
+/* ============================================================
+   ROOM 7: AUTO-REFRESH DATA + TOMBOL REFRESH MANUAL
+   Interval polling: 2 menit, hanya berjalan saat tab terlihat.
+   Data digambar ulang HANYA kalau isinya benar-benar berubah.
+   ============================================================ */
+
+var JEDA_POLL_R7 = 120000; // 2 menit dalam milidetik
+var sedangMuatR7 = false;
+var timerR7 = null;
+
+/* --- Buat tombol refresh + teks jam update, selipkan setelah tombol Hari Ini --- */
+function pasangTombolR7() {
+  var btnHariIni = document.getElementById("btn-hari-ini");
+  if (!btnHariIni) return;
+
+  var btn = document.createElement("button");
+  btn.id = "btn-refresh-r7";
+  btn.type = "button";
+  btn.textContent = "\u21BB";
+  btn.title = "Ambil data terbaru sekarang";
+  btn.setAttribute("aria-label", "Ambil data terbaru sekarang");
+  btnHariIni.insertAdjacentElement("afterend", btn);
+
+  var info = document.createElement("small");
+  info.id = "jam-update-r7";
+  info.textContent = "Data dimuat otomatis tiap 2 menit.";
+  btnHariIni.parentNode.appendChild(info);
+
+  btn.addEventListener("click", function () {
+    segarkanR7(true);
+  });
+}
+
+/* --- Tulis jam pembaruan terakhir --- */
+function tulisJamR7(adaPerubahan) {
+  var info = document.getElementById("jam-update-r7");
+  if (!info) return;
+  var d = new Date();
+  var jam = dua(d.getHours()) + ":" + dua(d.getMinutes()) + ":" + dua(d.getSeconds());
+  info.textContent = adaPerubahan
+    ? "Data diperbarui pukul " + jam
+    : "Data sudah terbaru — dicek pukul " + jam;
+}
+
+/* --- Inti: ambil data, bandingkan, gambar ulang hanya kalau berubah --- */
+function segarkanR7(manual) {
+  if (sedangMuatR7) return;
+  sedangMuatR7 = true;
+
+  var btn = document.getElementById("btn-refresh-r7");
+  if (btn) {
+    btn.disabled = true;
+    btn.classList.add("berputar-r7");
+  }
+
+  // penanda waktu supaya browser tidak menyajikan data basi dari cache-nya sendiri
+  var pemisah = API_URL.indexOf("?") >= 0 ? "&" : "?";
+  var url = API_URL + pemisah + "t=" + Date.now();
+
+  fetch(url)
+    .then(function (res) {
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return res.json();
+    })
+    .then(function (data) {
+      if (!data || data.status !== "ok") throw new Error("Status API bukan ok");
+
+      // snapshot data lama diambil DULU, sebelum peta baru dibangun
+      var lamaStr = JSON.stringify(petaEvent);
+      var hasil = bangunPetaEvent(data.events || []);
+      var petaBaru = hasil && typeof hasil === "object" ? hasil : petaEvent;
+      var baruStr = JSON.stringify(petaBaru);
+
+      if (lamaStr === baruStr) {
+        tulisJamR7(false);
+        return; // tidak ada perubahan → layar tidak disentuh sama sekali
+      }
+
+      petaEvent = petaBaru;
+
+      var kunciDibuka = typeof tanggalTerpilihR5 !== "undefined" ? tanggalTerpilihR5 : "";
+      renderKalender();
+
+      // kembalikan kondisi panel detail yang tadi sedang terbuka
+      if (kunciDibuka) {
+        if (petaEvent[kunciDibuka]) {
+          var sel = document.querySelector('.sel[data-tanggal="' + kunciDibuka + '"]');
+          if (sel) sel.classList.add("terpilih");
+          tanggalTerpilihR5 = kunciDibuka;
+          renderDetailR5(kunciDibuka);
+        } else {
+          tutupDetailR5(); // event pada tanggal itu sudah tidak ada lagi
+        }
+      }
+
+      console.log("ROOM 7: data berubah, kalender digambar ulang. Total event: " + (data.total_event || 0));
+      tulisJamR7(true);
+    })
+    .catch(function (err) {
+      console.error("ROOM 7: gagal menyegarkan data.", err);
+      var info = document.getElementById("jam-update-r7");
+      if (info) info.textContent = "Gagal mengambil data terbaru. Akan dicoba lagi.";
+    })
+    .then(function () {
+      sedangMuatR7 = false;
+      var b = document.getElementById("btn-refresh-r7");
+      if (b) {
+        b.disabled = false;
+        b.classList.remove("berputar-r7");
+      }
+    });
+}
+
+/* --- Atur timer: berhenti saat tab disembunyikan, jalan lagi saat dibuka --- */
+function mulaiTimerR7() {
+  if (timerR7) return;
+  timerR7 = setInterval(function () {
+    if (!document.hidden) segarkanR7(false);
+  }, JEDA_POLL_R7);
+}
+
+document.addEventListener("visibilitychange", function () {
+  if (!document.hidden) segarkanR7(false); // begitu kembali ke tab, langsung ambil data
+});
+
+pasangTombolR7();
+mulaiTimerR7();
