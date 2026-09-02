@@ -286,3 +286,36 @@ body {
     padding: 11px 12px;
   }
 }
+
+/* ===================== ROOM 5b: PERBAIKAN LEBAR KOLOM ===================== */
+
+/* kunci setiap kolom agar tidak melar mengikuti isi chip */
+#grid-tanggal {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+#grid-tanggal > * {
+  min-width: 0;
+}
+
+/* chip nama event: potong dengan ... kalau kepanjangan */
+.chip-event {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.sel {
+  min-width: 0;
+  overflow: hidden;
+}
+
+@media (max-width: 520px) {
+  .chip-event {
+    font-size: 9px;
+    padding: 1px 3px;
+  }
+}
