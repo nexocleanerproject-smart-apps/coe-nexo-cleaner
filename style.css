@@ -120,3 +120,169 @@ body {
   .sel { min-height: 62px; }
   .chip-event { font-size: 9px; }
 }
+
+/* ===================== ROOM 5: DETAIL & ACCORDION ===================== */
+
+/* penanda sel tanggal yang sedang dipilih */
+.sel.terpilih {
+  outline: 3px solid #0f4c81;
+  outline-offset: -3px;
+}
+
+#area-detail {
+  margin-top: 20px;
+}
+
+.detail-judul {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f4c81;
+  margin: 0 0 10px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #e3e8ef;
+}
+
+.akor-item {
+  border: 1px solid #dfe4ec;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.akor-judul {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  background: #f5f8fc;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  color: #17324f;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.akor-judul:hover {
+  background: #e9f0f9;
+}
+
+.akor-panah {
+  color: #0f4c81;
+  font-size: 12px;
+  transition: transform 0.15s ease;
+  flex-shrink: 0;
+}
+
+.akor-item.terbuka .akor-panah {
+  transform: rotate(90deg);
+}
+
+.akor-item.terbuka .akor-judul {
+  background: #0f4c81;
+  color: #fff;
+}
+
+.akor-item.terbuka .akor-panah {
+  color: #fff;
+}
+
+.akor-isi {
+  display: none;
+  padding: 14px;
+}
+
+.akor-item.terbuka .akor-isi {
+  display: block;
+}
+
+.flyer {
+  display: block;
+  width: 100%;
+  max-width: 340px;
+  border-radius: 8px;
+  margin: 0 auto 14px auto;
+  background: #eef2f7;
+}
+
+.baris-info {
+  display: flex;
+  gap: 10px;
+  padding: 7px 0;
+  font-size: 14px;
+  line-height: 1.5;
+  border-bottom: 1px dashed #e8ecf2;
+}
+
+.baris-info:last-of-type {
+  border-bottom: none;
+}
+
+.baris-label {
+  flex: 0 0 105px;
+  color: #6b7a8d;
+  font-weight: 600;
+}
+
+.baris-isi {
+  flex: 1;
+  color: #24303f;
+  word-break: break-word;
+}
+
+.tombol-peta {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 9px 16px;
+  background: #0f4c81;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.tombol-peta:hover {
+  background: #0c3c66;
+}
+
+.chip-wa {
+  display: inline-block;
+  margin: 3px 6px 3px 0;
+  padding: 5px 11px;
+  background: #e8f7ec;
+  color: #12703a;
+  border: 1px solid #b7e3c4;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.chip-wa:hover {
+  background: #d3f0dc;
+}
+
+.tanpa-data {
+  color: #8a96a5;
+  font-style: italic;
+  font-size: 13px;
+}
+
+@media (max-width: 520px) {
+  .baris-info {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .baris-label {
+    flex: none;
+    font-size: 12px;
+  }
+  .akor-judul {
+    font-size: 13px;
+    padding: 11px 12px;
+  }
+}

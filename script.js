@@ -158,3 +158,170 @@ document.getElementById("btn-hari-ini").addEventListener("click", function () {
 // ---------- Jalan ----------
 renderKalender();
 muatData();
+
+/* ===================== ROOM 5: ACCORDION & DETAIL EVENT ===================== */
+
+const elDetailR5 = document.getElementById("area-detail");
+const elGridR5 = document.getElementById("grid-tanggal");
+let tanggalTerpilihR5 = "";
+
+const NAMA_BULAN_R5 = [
+  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+  "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+];
+
+/* "2026-09-02" -> "2 September 2026" */
+function tglIndoR5(kunci) {
+  const p = String(kunci).split("-");
+  if (p.length !== 3) return kunci;
+  return Number(p[2]) + " " + NAMA_BULAN_R5[Number(p[1]) - 1] + " " + p[0];
+}
+
+/* "081234567890" -> "6281234567890" (format wajib wa.me) */
+function keNomorWaR5(no) {
+  let bersih = String(no).replace(/\D/g, "");
+  if (bersih.startsWith("0")) bersih = "62" + bersih.slice(1);
+  else if (!bersih.startsWith("62")) bersih = "62" + bersih;
+  return bersih;
+}
+
+function barisInfoR5(label, isiHtml) {
+  return '<div class="baris-info"><div class="baris-label">' + label +
+         '</div><div class="baris-isi">' + isiHtml + "</div></div>";
+}
+
+function chipWaR5(teks, nomor) {
+  return '<a class="chip-wa" href="https://wa.me/' + keNomorWaR5(nomor) +
+         '" target="_blank" rel="noopener">' + amanTeks(teks) + "</a>";
+}
+
+/* isi panel detail satu event */
+function htmlIsiEventR5(ev) {
+  let h = "";
+
+  if (ev.foto_flyer_event) {
+    h += '<img class="flyer" src="' + amanTeks(ev.foto_flyer_event) +
+         '" alt="Flyer ' + amanTeks(ev.nama_event) + '" loading="lazy">';
+  }
+
+  if (ev.tanggal_mulai_event) {
+    let tgl = tglIndoR5(ev.tanggal_mulai_event);
+    if (ev.tanggal_selesai_event && ev.tanggal_selesai_event !== ev.tanggal_mulai_event) {
+      tgl += " s/d " + tglIndoR5(ev.tanggal_selesai_event);
+    }
+    h += barisInfoR5("Tanggal", amanTeks(tgl));
+  }
+
+  if (ev.waktu_mulai_event) {
+    let waktu = amanTeks(ev.waktu_mulai_event);
+    if (ev.waktu_selesai_event) waktu += " s/d " + amanTeks(ev.waktu_selesai_event);
+    h += barisInfoR5("Waktu", waktu);
+  }
+
+  if (ev.alamat_lokasi) {
+    h += barisInfoR5("Lokasi", amanTeks(ev.alamat_lokasi));
+  }
+
+  const daftarSales = Array.isArray(ev.sales_bertugas) ? ev.sales_bertugas : [];
+  if (daftarSales.length > 0) {
+    let isi = "";
+    for (let i = 0; i < daftarSales.length; i++) {
+      const s = daftarSales[i];
+      if (s.no_wa) isi += chipWaR5(s.nama_sales, s.no_wa);
+      else isi += '<span class="chip-wa">' + amanTeks(s.nama_sales) + "</span>";
+    }
+    h += barisInfoR5("Sales bertugas", isi);
+  } else {
+    h += barisInfoR5("Sales bertugas", '<span class="tanpa-data">belum ada</span>');
+  }
+
+  if (ev.contact_center_petugas_event) {
+    h += barisInfoR5("Contact center", chipWaR5(ev.contact_center_petugas_event, ev.contact_center_petugas_event));
+  }
+
+  if (ev.link_share_lok) {
+    h += '<a class="tombol-peta" href="' + amanTeks(ev.link_share_lok) +
+         '" target="_blank" rel="noopener">Buka Peta Lokasi</a>';
+  }
+
+  return h;
+}
+
+/* gambar seluruh accordion untuk satu tanggal */
+function renderDetailR5(kunci) {
+  const daftar = (typeof petaEvent === "object" && petaEvent[kunci]) ? petaEvent[kunci] : [];
+
+  if (daftar.length === 0) {
+    tutupDetailR5();
+    return;
+  }
+
+  let h = '<div class="detail-judul">Event pada ' + tglIndoR5(kunci) +
+          " (" + daftar.length + " event)</div>";
+
+  for (let i = 0; i < daftar.length; i++) {
+    const ev = daftar[i];
+    // auto-buka kalau hanya ada 1 event
+    const kelas = (daftar.length === 1) ? "akor-item terbuka" : "akor-item";
+    h += '<div class="' + kelas + '">' +
+           '<button type="button" class="akor-judul">' +
+             '<span class="akor-panah">&#9654;</span>' +
+             '<span>' + amanTeks(ev.nama_event || "(tanpa nama)") + "</span>" +
+           "</button>" +
+           '<div class="akor-isi">' + htmlIsiEventR5(ev) + "</div>" +
+         "</div>";
+  }
+
+  elDetailR5.innerHTML = h;
+  elDetailR5.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function tutupDetailR5() {
+  elDetailR5.innerHTML = "";
+  tanggalTerpilihR5 = "";
+  const lama = elGridR5.querySelectorAll(".sel.terpilih");
+  for (let i = 0; i < lama.length; i++) lama[i].classList.remove("terpilih");
+}
+
+/* klik kotak tanggal (event delegation, tahan render ulang tiap ganti bulan) */
+elGridR5.addEventListener("click", function (e) {
+  const sel = e.target.closest(".sel.ada-event");
+  if (!sel) return;
+
+  const kunci = sel.dataset.tanggal;
+  if (!kunci) return;
+
+  // klik ulang tanggal yang sama = tutup
+  if (kunci === tanggalTerpilihR5) {
+    tutupDetailR5();
+    return;
+  }
+
+  const lama = elGridR5.querySelectorAll(".sel.terpilih");
+  for (let i = 0; i < lama.length; i++) lama[i].classList.remove("terpilih");
+  sel.classList.add("terpilih");
+
+  tanggalTerpilihR5 = kunci;
+  renderDetailR5(kunci);
+});
+
+/* klik judul accordion (delegation juga, isi #area-detail selalu di-generate ulang) */
+elDetailR5.addEventListener("click", function (e) {
+  const judul = e.target.closest(".akor-judul");
+  if (!judul) return;
+
+  const item = judul.parentElement;
+  const sudahTerbuka = item.classList.contains("terbuka");
+
+  // hanya 1 boleh terbuka
+  const semua = elDetailR5.querySelectorAll(".akor-item");
+  for (let i = 0; i < semua.length; i++) semua[i].classList.remove("terbuka");
+
+  if (!sudahTerbuka) item.classList.add("terbuka");
+});
+
+/* ganti bulan -> tutup detail supaya tidak menampilkan tanggal bulan lain */
+["btn-prev", "btn-next", "btn-hari-ini"].forEach(function (id) {
+  const b = document.getElementById(id);
+  if (b) b.addEventListener("click", tutupDetailR5);
+});
