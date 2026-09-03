@@ -453,3 +453,35 @@ document.addEventListener("visibilitychange", function () {
 
 pasangTombolR7();
 mulaiTimerR7();
+
+/* ============================================================
+   ROOM 8: TAMPILKAN NAMA PANGGILAN SALES DI DETAIL EVENT
+   Chip hijau sales menampilkan nama_panggilan, bukan nama lengkap.
+   Apps Script sudah menjamin field ini tidak pernah kosong
+   (otomatis mundur ke nama_sales kalau belum diisi).
+   ============================================================ */
+
+/* Simpan fungsi asli Room 5 supaya bisa dipakai ulang, lalu bungkus.
+   Kode Room 5 tidak disentuh sama sekali. */
+var htmlIsiEventAsliR8 = htmlIsiEventR5;
+
+htmlIsiEventR5 = function (ev) {
+  // salin objek event, lalu ganti nama_sales dengan nama panggilan
+  var salinan = {};
+  for (var k in ev) {
+    if (Object.prototype.hasOwnProperty.call(ev, k)) salinan[k] = ev[k];
+  }
+
+  if (Array.isArray(ev.sales_bertugas)) {
+    salinan.sales_bertugas = ev.sales_bertugas.map(function (s) {
+      return {
+        id_sales: s.id_sales,
+        nama_sales: s.nama_panggilan || s.nama_sales,
+        nama_panggilan: s.nama_panggilan,
+        no_wa: s.no_wa
+      };
+    });
+  }
+
+  return htmlIsiEventAsliR8(salinan);
+};
